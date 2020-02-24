@@ -11,11 +11,9 @@ const queue = new Q('deeds');
 const App = (props) => {
 
   const [formData, setFormData] = useState({});
-  const [handleSubmit, handleInput, handleChange, values] = useForm(setTheForm);
+  const [handleSubmit, handleInput, values] = useForm(setTheForm);
 
   function setTheForm(data) {
-    console.log('SET THE FORM')
-    console.log(data);
     setFormData(data);
     Q.publish('deeds', 'work', values);
     socket.emit('words', values);
@@ -42,8 +40,8 @@ const App = (props) => {
       <pre>Queue Values: {JSON.stringify(queueMessage)}</pre>
       <pre>Socket Values: {JSON.stringify(socketMessage)}</pre>
       <form onSubmit={handleSubmit}>
-        <input name='firstName' placeholder="First Name" onChange={handleChange} />
-        <input name='lastName' placeholder="Last Name" onChange={handleChange} />
+        <input name='firstName' placeholder="First Name" {...handleInput} />
+        <input name='lastName' placeholder="Last Name" {...handleInput} />
         <button>Save</button>
       </form>
     </>
