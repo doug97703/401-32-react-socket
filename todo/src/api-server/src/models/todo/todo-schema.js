@@ -10,4 +10,4 @@ const todoSchema = mongoose.Schema({
   dueDate: { type: String }
 });
 
-module.exports = mongoose.model('products', todoSchema);
+module.exports = mongoose.model('todo', todoSchema);

@@ -51,6 +51,7 @@ function handleDelete(req, res, next) {
 }
 
 function handlePost(req, res, next) {
+  console.log(req.body)
   req.model.create(req.body)
     .then(result => res.json(result))
     .catch(next);
