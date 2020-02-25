@@ -22,7 +22,6 @@ export default props => {
     pull()
       .then(data => data.json())
       .then(returned => {
-        console.log(returned.results)
         setList(returned.results)
       })
   }, [item])
@@ -31,12 +30,11 @@ export default props => {
     e.preventDefault()
     let current = item;
     current[e.target.name] = e.target.value
-    setItem( current );
+    setItem(current);
   };
 
   const addItem = async (e) => {
     e.preventDefault()
-    console.log(item)
     await push(item, setItem)
   };
 

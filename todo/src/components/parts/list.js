@@ -2,8 +2,6 @@ import React from 'react'
 import useFetch from '../hooks/api';
 
 export default props => {
-  console.log('LIST---------------')
-  console.log(props.todoList)
   const [pull, push, update, deleteToDo] = useFetch();
 
   return (
