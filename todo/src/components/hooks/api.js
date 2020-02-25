@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import uuid from 'uuid/v4';
 
 const url = 'http://localhost:3000/api/v1/todo';
 
@@ -9,10 +10,12 @@ const useFetch = (callback) => {
     return response
   }
 
-  const push = async (body, next) => {
+  const push = async (item, next) => {
+    const defaults = { _id: uuid(), complete: false };
+    const newItem = Object.assign({}, item, defaults);
     await fetch(url, {
       method: "POST",
-      body: JSON.stringify(body),
+      body: JSON.stringify(newItem),
       headers: {
         "Content-Type": "application/json"
       },

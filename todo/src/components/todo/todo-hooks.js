@@ -1,6 +1,5 @@
 //Readt imports
 import React, { useEffect } from 'react';
-import uuid from 'uuid/v4';
 import { When } from '../if';
 import Modal from '../modal/modal.js';
 import Details from '../parts/details.js';
@@ -9,11 +8,6 @@ import Form from '../parts/form.js';
 import './todo.scss';
 import { useState } from 'react';
 import useFetch from '../hooks/api';
-
-
-
-//API
-// import Model from '../../api-server/src/models/todo/todo-model'
 
 export default props => {
 
@@ -43,13 +37,7 @@ export default props => {
   const addItem = async (e) => {
     e.preventDefault();
     e.target.reset();
-    const defaults = { _id: uuid(), complete: false };
-    const newItem = Object.assign({}, item, defaults);
-    await push(newItem, setItem)
-  };
-
-  const deleteItem = async id => {
-    await deleteToDo(id, setItem)
+    await push(item, setItem)
   };
 
   const toggleComplete = async id => {
@@ -74,7 +62,7 @@ export default props => {
         <Form addItem={addItem} handleInputChange={handleInputChange} />
         <section className="todo">
           <When condition={todoList}>
-            <List deleteItem={deleteItem} toggleDetails={toggleDetails} toggleComplete={toggleComplete} todoList={todoList} />
+            <List setItem={setItem} toggleDetails={toggleDetails} toggleComplete={toggleComplete} todoList={todoList} />
           </When>
         </section>
         <When condition={showDetails}>
