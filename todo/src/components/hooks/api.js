@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import uuid from 'uuid/v4';
 
-const url = 'http://localhost:3000/api/v1/todo';
+const url = 'https://lit-anchorage-79085.herokuapp.com/api/v1/todo';
 
 const useFetch = (callback) => {
 
