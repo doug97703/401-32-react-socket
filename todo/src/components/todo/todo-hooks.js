@@ -1,5 +1,5 @@
 //Readt imports
-import React from 'react';
+import React, { useEffect } from 'react';
 import uuid from 'uuid/v4';
 import { When } from '../if';
 import Modal from '../modal/modal.js';
@@ -8,26 +8,30 @@ import List from '../parts/list.js';
 import Form from '../parts/form.js';
 import './todo.scss';
 import { useState } from 'react';
+import useFetch from '../hooks/api';
 
 
 
 //API
 // import Model from '../../api-server/src/models/todo/todo-model'
 
-
-
-
-const headers = {
-  'Content-Type': 'application/json',
-  Accept: 'application/json',
-}
-
 export default props => {
 
-  const [todoList, setList] = useState([]);
+  const [pull, push, update, deleteToDo] = useFetch();
+
   const [item, setItem] = useState({});
   const [showDetails, setShowDetails] = useState(false);
   const [details, setDetails] = useState({});
+  const [todoList, setList] = useState([]);
+
+  useEffect( () => {
+    pull()
+      .then(data => data.json())
+      .then(returned => {
+        console.log(returned.results)
+        setList(returned.results)
+      })
+  }, [item])
 
   const handleInputChange = e => {
     e.preventDefault()
@@ -41,33 +45,17 @@ export default props => {
     e.target.reset();
     const defaults = { _id: uuid(), complete: false };
     const newItem = Object.assign({}, item, defaults);
-    let currentList = todoList;
-    currentList.push(newItem)
-    console.log(newItem)
-    // Model.create(newItem)
-    const response = await fetch('http://localhost:3000/api/v1/todo', {
-      method: "POST",
-      body: JSON.stringify({ text: 'TESTING', _id: uuid() }),
-      headers: {
-        "Content-Type": "application/json"
-      },
-    })
-    let data = await response.json();
-    console.log(data)
-    setItem({});
-    setList(currentList);
+    await push(newItem, setItem)
   };
 
-  const deleteItem = id => {
-    setList(todoList.filter(item => item._id !== id));
+  const deleteItem = async id => {
+    await deleteToDo(id, setItem)
   };
 
-  const toggleComplete = id => {
-    let newItem = todoList.filter(i => i._id === id)[0] || {};
-    if (newItem._id) {
-      newItem.complete = !newItem.complete;
-      setItem(newItem);
-    }
+  const toggleComplete = async id => {
+    let entry = todoList.filter(i => i._id === id)[0] || {};
+    entry.complete = entry._id ? !entry.complete : entry.complete
+    await update(entry._id, entry, setItem)
   };
 
   const toggleDetails = id => {
@@ -80,12 +68,14 @@ export default props => {
       <>
         <header>
           <h2>
-            There are {todoList.filter(item => !item.complete).length} items to complete
+            There are {todoList ? todoList.filter(item => !item.complete).length : 0} items to complete
           </h2>
         </header>
         <Form addItem={addItem} handleInputChange={handleInputChange} />
         <section className="todo">
-          < List deleteItem={deleteItem} toggleDetails={toggleDetails} toggleComplete={toggleComplete} todoList={todoList} />
+          <When condition={todoList}>
+            <List deleteItem={deleteItem} toggleDetails={toggleDetails} toggleComplete={toggleComplete} todoList={todoList} />
+          </When>
         </section>
         <When condition={showDetails}>
           <Modal title="To Do Item" close={toggleDetails}>
