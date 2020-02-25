@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import uuid from 'uuid/v4';
 
 const url = 'https://lit-anchorage-79085.herokuapp.com/api/v1/todo';

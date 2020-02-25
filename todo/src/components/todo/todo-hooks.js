@@ -11,7 +11,7 @@ import useFetch from '../hooks/api';
 
 export default props => {
 
-  const [pull, push, update, deleteToDo] = useFetch();
+  const [pull, push, update] = useFetch();
 
   const [item, setItem] = useState({});
   const [showDetails, setShowDetails] = useState(false);
@@ -35,8 +35,8 @@ export default props => {
   };
 
   const addItem = async (e) => {
-    e.preventDefault();
-    e.target.reset();
+    e.preventDefault()
+    console.log(item)
     await push(item, setItem)
   };
 
