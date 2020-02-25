@@ -1,6 +1,6 @@
 import React from 'react';
 import { When } from '../if';
-import Modal from '../modal';
+import Modal from '../modal/modal.js';
 
 import './todo.scss';
 
@@ -160,7 +160,7 @@ class ToDo extends React.Component {
         </section>
 
         <When condition={this.state.showDetails}>
-          <Modal title="To Do Item" close={this.toggleDetails}>
+          <Modal title="To Do Item" details={this.state.details} close={this.toggleDetails}>
             <div className="todo-details">
               <header>
                 <span>Assigned To: {this.state.details.assignee}</span>

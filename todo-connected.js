@@ -1,9 +1,10 @@
 import React from 'react';
-import uuid from 'uuid/v4';
 import { When } from '../if';
 import Modal from '../modal';
 
 import './todo.scss';
+
+const todoAPI = 'https://api-js401.herokuapp.com/api/v1/todo';
 
 class ToDo extends React.Component {
   constructor(props) {
@@ -20,8 +21,18 @@ class ToDo extends React.Component {
     this.setState({ item: {...this.state.item, [e.target.name]: e.target.value} });
   };
 
-  handleSubmit = (e) => {
-    this.props.handleSubmit(this.state.item);
+  callAPI = (url, method='get', body, handler, errorHandler) => {
+
+    return fetch(url, {
+      method: method,
+      mode: 'cors',
+      cache: 'no-cache',
+      headers: { 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined,
+    })
+      .then(response => response.json())
+      .then(data => typeof handler === 'function' ? handler(data) : null )
+      .catch( (e) => typeof errorHandler === 'function' ? errorHandler(e) : console.error(e)  );
   };
 
   addItem = (e) => {
@@ -29,31 +40,36 @@ class ToDo extends React.Component {
     e.preventDefault();
     e.target.reset();
 
-    const defaults = { _id: uuid(), complete:false };
-    const item = Object.assign({}, this.state.item, defaults);
+    const _updateState = newItem =>
+      this.setState({
+        todoList: [...this.state.todoList, newItem],
+      });
 
-    this.setState({
-      todoList: [...this.state.todoList, item],
-      item: {},
-    });
+    this.callAPI( todoAPI, 'POST', this.state.item, _updateState );
 
   };
 
   deleteItem = id => {
 
-    this.setState({
-      todoList: this.state.todoList.filter(item => item._id !== id),
-    });
+    const _updateState = (results) =>
+      this.setState({
+        todoList: this.state.todoList.filter(item => item._id !== id),
+      });
+
+    this.callAPI( `${todoAPI}/${id}`, 'DELETE', undefined, _updateState );
 
   };
 
   saveItem = updatedItem => {
 
-    this.setState({
-      todoList: this.state.todoList.map(item =>
-        item._id === updatedItem._id ? updatedItem : item
-      ),
-    });
+    const _updateState = (newItem) =>
+      this.setState({
+        todoList: this.state.todoList.map(item =>
+          item._id === newItem._id ? newItem : item
+        ),
+      });
+
+    this.callAPI( `${todoAPI}/${updatedItem.id}`, 'PUT', updatedItem, _updateState );
 
   };
 
@@ -69,6 +85,15 @@ class ToDo extends React.Component {
     let showDetails = ! this.state.showDetails;
     let details = this.state.todoList.filter( item => item._id === id )[0] || {};
     this.setState({details, showDetails});
+  }
+
+  getTodoItems = () => {
+    const _updateState = data => this.setState({ todoList: data.results });
+    this.callAPI( todoAPI, 'GET', undefined, _updateState );
+  };
+
+  componentDidMount = () => {
+    this.getTodoItems();
   }
 
   render() {
