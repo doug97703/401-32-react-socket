@@ -1,22 +1,24 @@
 import React, {useState, useEffect} from 'react';
 import useForm from './hooks/form';
+import useSocket from './hooks/socket';
 
 import io from 'socket.io-client';
 import Q from '@nmq/q/client';
 
 // Connect outside of the render cycle ...
-const socket = io.connect('http://localhost:3001');
 const queue = new Q('deeds');
+
 
 const App = (props) => {
 
   const [formData, setFormData] = useState({});
   const [handleSubmit, handleInput, values] = useForm(setTheForm);
+  const [subscribe, publish, connect] = useSocket(setTheForm)
 
   function setTheForm(data) {
     setFormData(data);
     Q.publish('deeds', 'work', values);
-    socket.emit('words', values);
+    publish('words', values);
   }
 
   const [queueMessage, setQueueMessage] = useState({});
@@ -27,9 +29,7 @@ const App = (props) => {
       setQueueMessage(message);
     });
 
-    socket.on('incoming', message => {
-      setSocketMessage(message);
-    });
+    subscribe('incoming', setSocketMessage)
 
   });
 
