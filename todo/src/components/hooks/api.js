@@ -1,19 +1,17 @@
 import uuid from 'uuid/v4';
 import { useState, useEffect } from 'react';
 
-const url = 'https://lit-anchorage-79085.herokuapp.com/api/v1/todo';
-
 const useFetch = (callback) => {
 
   const [query, setQuery] = useState({})
 
-  const pull = async () => {
+  const pull = async (url) => {
     const raw = await fetch(url)
     const response = await raw.json()
     return response.results
   }
 
-  const push = async (next) => {
+  const push = async (url, next) => {
     const current = query;
     current._id = uuid()
     current.complete = false
@@ -27,9 +25,8 @@ const useFetch = (callback) => {
     next()
   }
 
-  const update = async (id, body, next) => {
-    let route = `${url}/${id}`
-    await fetch(route, {
+  const update = async (url, body, next) => {
+    await fetch(url, {
       method: "PUT",
       body: JSON.stringify(body),
       headers: {
@@ -39,9 +36,8 @@ const useFetch = (callback) => {
     next()
   }
 
-  const deleteToDo = async (id, next) => {
-    let route = `${url}/${id}`
-    await fetch(route, {
+  const deleteToDo = async (url, next) => {
+    await fetch(url, {
       method: "DELETE",
     })
     next()

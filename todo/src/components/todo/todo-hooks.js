@@ -9,7 +9,14 @@ import './todo.scss';
 import { useState } from 'react';
 import useFetch from '../hooks/api';
 
+const url = 'https://lit-anchorage-79085.herokuapp.com/api/v1/todo';
+
 export default props => {
+
+  const pullData = () => {
+    pull(url)
+      .then(results => setList(results))
+  }
 
   const [pull, push, update, deleteToDo, updateQuery] = useFetch();
 
@@ -17,10 +24,7 @@ export default props => {
   const [details, setDetails] = useState({});
   const [todoList, setList] = useState([]);
 
-  const pullData = () => {
-    pull()
-      .then(results => setList(results))
-  }
+
 
   useEffect(() => {
     pullData();
@@ -29,13 +33,13 @@ export default props => {
 
   const addItem = (e) => {
     e.preventDefault()
-    push(pullData)
+    push(url, pullData)
   };
 
   const toggleComplete = id => {
     let entry = todoList.filter(i => i._id === id)[0] || {};
     entry.complete = entry._id ? !entry.complete : entry.complete
-    update(entry._id, entry, pullData)
+    update(`${url}/${id}`, entry, pullData)
   };
 
   const toggleDetails = id => {
@@ -54,7 +58,7 @@ export default props => {
         <Form addItem={addItem} update={updateQuery} />
         <section className="todo">
           <When condition={todoList}>
-            <List delete={(id) => deleteToDo(id, pullData)} toggleDetails={toggleDetails} toggleComplete={toggleComplete} todoList={todoList} />
+            <List delete={(id) => deleteToDo(`${url}/${id}`, pullData)} toggleDetails={toggleDetails} toggleComplete={toggleComplete} todoList={todoList} />
           </When>
         </section>
         <When condition={showDetails}>
