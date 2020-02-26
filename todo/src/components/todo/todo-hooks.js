@@ -1,4 +1,3 @@
-//Readt imports
 import React, { useEffect } from 'react';
 import { When } from '../if';
 import Modal from '../modal/modal.js';
@@ -18,29 +17,31 @@ export default props => {
       .then(results => setList(results))
   }
 
-  const [pull, push, update, deleteToDo, updateQuery] = useFetch();
+  const [pull, push, update, destroy, updateQuery] = useFetch();
+  //basically just CRUD operations & a function to update request body state
 
   const [showDetails, setShowDetails] = useState(false);
   const [details, setDetails] = useState({});
   const [todoList, setList] = useState([]);
 
-
-
   useEffect(() => {
     pullData();
   }, []);
-
+  //similar to solution code - updates todoList from API on render
 
   const addItem = (e) => {
     e.preventDefault()
     push(url, pullData)
   };
+  //request info is already in useFetch
+  //hook calls pullData after it hits the API
 
   const toggleComplete = id => {
     let entry = todoList.filter(i => i._id === id)[0] || {};
     entry.complete = entry._id ? !entry.complete : entry.complete
     update(`${url}/${id}`, entry, pullData)
   };
+  //updates API and pulls data back down when item is marked complete...
 
   const toggleDetails = id => {
     setShowDetails(!showDetails)
@@ -48,6 +49,7 @@ export default props => {
     setDetails(details);
   }
 
+  //updating request body & deleting items just goes staight into useFetch()
     return (
       <>
         <header>
@@ -58,7 +60,7 @@ export default props => {
         <Form addItem={addItem} update={updateQuery} />
         <section className="todo">
           <When condition={todoList}>
-            <List delete={(id) => deleteToDo(`${url}/${id}`, pullData)} toggleDetails={toggleDetails} toggleComplete={toggleComplete} todoList={todoList} />
+            <List delete={(id) => destroy(`${url}/${id}`, pullData)} toggleDetails={toggleDetails} toggleComplete={toggleComplete} todoList={todoList} />
           </When>
         </section>
         <When condition={showDetails}>

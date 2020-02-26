@@ -1,9 +1,10 @@
 import uuid from 'uuid/v4';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-const useFetch = (callback) => {
+const useFetch = () => {
 
   const [query, setQuery] = useState({})
+  //keeps track of request body
 
   const pull = async (url) => {
     const raw = await fetch(url)
@@ -22,7 +23,7 @@ const useFetch = (callback) => {
         "Content-Type": "application/json"
       },
     })
-    next()
+    next() //calling pullData in todo-hooks.js
   }
 
   const update = async (url, body, next) => {
@@ -36,7 +37,7 @@ const useFetch = (callback) => {
     next()
   }
 
-  const deleteToDo = async (url, next) => {
+  const destroy = async (url, next) => {
     await fetch(url, {
       method: "DELETE",
     })
@@ -54,7 +55,7 @@ const useFetch = (callback) => {
     pull,
     push,
     update,
-    deleteToDo,
+    destroy,
     updateQuery,
   ];
 
