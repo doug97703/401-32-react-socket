@@ -14,5 +14,5 @@ Both created with React.
 
 `npm start`
 
-The API URL variable in todo/src/hooks/api can be easily changed if needed.
+The API URL variable in todo/src/todo/todo-hooks.js can be easily changed if needed.
 
