@@ -1,12 +1,17 @@
 body, html {
     height: 100%;
     margin: 0;
-    padding:0;
+    padding:1%;
     width: 100%;
+    background-color: rgb(37, 37, 37);
+    color: rgb(211, 211, 211);
+    font-family: Ubuntu Mono;
+    font-size: 18px;
 }
 .todo-details {
     display:flex;
     flex-direction:column;
+    background: rgb(37, 37, 37);
 
     header {
         display:flex;
@@ -57,10 +62,10 @@ body, html {
 
             &.complete-true {
               span {
-                background: pink;
+                background: rgb(7, 114, 78);
                 text-decoration:line-through;
                 &:hover {
-                   background: seagreen;
+                   background: rgb(114, 7, 114);
                 }
               }
             }
@@ -69,20 +74,22 @@ body, html {
                 background: #e0e0e0;
                 cursor:pointer;
                 &:hover {
-                    background: pink;
+                    background: rgb(7, 114, 78);
                 }
             }
              span, input {
                  border: .5px solid #eee;
                  display:inline-block;
-                 padding: .2em .25em;
+                 padding: 2%;
+                 margin: 5px;
                  width: 300px;
+                 background-color: rgb(114, 7, 114);
              }
 
             button {
                 background: transparent;
                 border:none;
-                color:blue;
+                color:rgb(170, 12, 170);
                 cursor:pointer;
                 padding:0;
                 margin: 0 .75em;

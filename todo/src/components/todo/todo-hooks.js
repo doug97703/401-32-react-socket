@@ -11,37 +11,31 @@ import useFetch from '../hooks/api';
 
 export default props => {
 
-  const [pull, push, update] = useFetch();
+  const [pull, push, update, deleteToDo, updateQuery] = useFetch();
 
-  const [item, setItem] = useState({});
   const [showDetails, setShowDetails] = useState(false);
   const [details, setDetails] = useState({});
   const [todoList, setList] = useState([]);
 
-  useEffect( () => {
+  const pullData = () => {
     pull()
-      .then(data => data.json())
-      .then(returned => {
-        setList(returned.results)
-      })
-  }, [item])
+      .then(results => setList(results))
+  }
 
-  const handleInputChange = e => {
+  useEffect(() => {
+    pullData();
+  }, []);
+
+
+  const addItem = (e) => {
     e.preventDefault()
-    let current = item;
-    current[e.target.name] = e.target.value
-    setItem(current);
+    push(pullData)
   };
 
-  const addItem = async (e) => {
-    e.preventDefault()
-    await push(item, setItem)
-  };
-
-  const toggleComplete = async id => {
+  const toggleComplete = id => {
     let entry = todoList.filter(i => i._id === id)[0] || {};
     entry.complete = entry._id ? !entry.complete : entry.complete
-    await update(entry._id, entry, setItem)
+    update(entry._id, entry, pullData)
   };
 
   const toggleDetails = id => {
@@ -57,10 +51,10 @@ export default props => {
             There are {todoList ? todoList.filter(item => !item.complete).length : 0} items to complete
           </h2>
         </header>
-        <Form addItem={addItem} handleInputChange={handleInputChange} />
+        <Form addItem={addItem} update={updateQuery} />
         <section className="todo">
           <When condition={todoList}>
-            <List setItem={setItem} toggleDetails={toggleDetails} toggleComplete={toggleComplete} todoList={todoList} />
+            <List delete={(id) => deleteToDo(id, pullData)} toggleDetails={toggleDetails} toggleComplete={toggleComplete} todoList={todoList} />
           </When>
         </section>
         <When condition={showDetails}>

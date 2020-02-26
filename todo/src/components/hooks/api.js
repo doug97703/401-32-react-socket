@@ -1,25 +1,30 @@
 import uuid from 'uuid/v4';
+import { useState, useEffect } from 'react';
 
 const url = 'https://lit-anchorage-79085.herokuapp.com/api/v1/todo';
 
 const useFetch = (callback) => {
 
+  const [query, setQuery] = useState({})
+
   const pull = async () => {
-    const response = await fetch(url)
-    return response
+    const raw = await fetch(url)
+    const response = await raw.json()
+    return response.results
   }
 
-  const push = async (item, next) => {
-    const defaults = { _id: uuid(), complete: false };
-    const newItem = Object.assign({}, item, defaults);
+  const push = async (next) => {
+    const current = query;
+    current._id = uuid()
+    current.complete = false
     await fetch(url, {
       method: "POST",
-      body: JSON.stringify(newItem),
+      body: JSON.stringify(current),
       headers: {
         "Content-Type": "application/json"
       },
     })
-    next({})
+    next()
   }
 
   const update = async (id, body, next) => {
@@ -31,7 +36,7 @@ const useFetch = (callback) => {
         "Content-Type": "application/json"
       },
     })
-    next({})
+    next()
   }
 
   const deleteToDo = async (id, next) => {
@@ -39,7 +44,14 @@ const useFetch = (callback) => {
     await fetch(route, {
       method: "DELETE",
     })
-    next({})
+    next()
+  }
+
+  const updateQuery = e => {
+    e.preventDefault()
+    let current = query;
+    current[e.target.name] = e.target.value
+    setQuery(current);
   }
 
   return [
@@ -47,6 +59,7 @@ const useFetch = (callback) => {
     push,
     update,
     deleteToDo,
+    updateQuery,
   ];
 
 };
